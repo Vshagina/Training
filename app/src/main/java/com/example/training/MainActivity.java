@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
     EditText id,name,description;
     Button add,viewList;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,16 +78,10 @@ public class MainActivity extends AppCompatActivity {
 
                 ArrayList<String> dataList = new ArrayList<>();
                 while (res.moveToNext()){
-                    dataList.add( res.getString(0) + "\n" + res.getString(1) + "\n\n");
+                    dataList.add( res.getString(0) + "\n" + res.getString(1) + "\n" + res.getString(2));
                 }
-
-                // Создайте Intent для перехода к активности списка
                 Intent intent = new Intent(getApplicationContext(), ListActivity.class);
-
-                // Передайте список данных в новую активность
                 intent.putStringArrayListExtra("dataList", dataList);
-
-                // Запустите новую активность
                 startActivity(intent);
             }
         });

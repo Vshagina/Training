@@ -1,5 +1,6 @@
 package com.example.training;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,7 +15,6 @@ public class DataBaseAccessor extends SQLiteOpenHelper {
     private static final int DB_VERSION = 2;
     // таблицы
     private static final String TABLE_NAME = "TRAINING_TABLE";
-    // столбцы таблицы Note
     private static final String COLUMN_ID = "_id";//Обязательно с подчеркиванием
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_DESCRIPTION = "DESCRIPTION";
@@ -59,5 +59,26 @@ public class DataBaseAccessor extends SQLiteOpenHelper {
     public Cursor viewData() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+    }
+
+
+    @SuppressLint("Range")
+    public int getItemIdFromDatabase(String itemName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] columns = {COLUMN_ID};
+        String selection = COLUMN_NAME + "=?";
+        String[] selectionArgs = {itemName};
+
+        Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+
+        int itemId = -1;
+
+        if (cursor.moveToFirst()) {
+            itemId = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+        }
+
+        cursor.close();
+        return itemId;
     }
 }
