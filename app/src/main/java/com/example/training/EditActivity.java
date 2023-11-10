@@ -23,28 +23,26 @@ public class EditActivity extends AppCompatActivity {
         descriptionEditText = findViewById(R.id.descriptionEdit);
         saveButton = findViewById(R.id.saveButton);
 
+        //получение данных из прошлой активити
         String itemName = getIntent().getStringExtra("itemName");
         String itemDescription = getIntent().getStringExtra("itemDescription");
         String id = getIntent().getStringExtra("itemid");
+        //установка новых данных в нужные поля
         nameEditText.setText(itemName);
         descriptionEditText.setText(itemDescription);
 
+        //нажатии на кнопку для сохранения
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //получаемя отредактированные данные
                 String editedName = nameEditText.getText().toString();
                 String editedDescription = descriptionEditText.getText().toString();
-
+                //обновляем их в базе данных
                 db.updateData(Integer.parseInt(id), editedName, editedDescription);
-
                 finish();
             }
         });
-    }
-
-
-    private int getItemIdFromDatabase(String itemName) {
-        return db.getItemIdFromDatabase(itemName);
     }
 }
 

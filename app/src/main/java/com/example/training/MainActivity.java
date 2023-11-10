@@ -17,22 +17,22 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     DataBaseAccessor db;
-    EditText id,name,description;
+    EditText name,description;
     Button add,viewList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //id = findViewById(R.id.id);
         name = findViewById(R.id.name);
         add = findViewById(R.id.add_button);
         viewList = findViewById(R.id.view_button);
 
         db = new DataBaseAccessor(this);
-        ADD();
-        VIEW();
+        ADD(); // вызывает метод,который настраивает обработчик кнопки добавления
+        VIEW();// а этот метод для настраивания обработчика просмотра списка элементов
     }
+    //настраивает обработчик кнопки добавления
     private void ADD() {
         description = findViewById(R.id.description);
         add.setOnClickListener(new View.OnClickListener() {
@@ -43,15 +43,15 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("Хватит,добавляй!", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                //вызывается метод для вставики новых данных вбд
                                 boolean isInserted = db.insertData(
                                         name.getText().toString(),
                                         description.getText().toString()
                                 );
-
                                 if (isInserted) {
-                                    Toast.makeText(MainActivity.this, "Добавление данных", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this, "Успешно", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(MainActivity.this, "Ошибка в добавление данных", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this, "Проверьте введённые данные", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }).setNegativeButton("Хорошо,уговорил,потренируюсь ещё", new DialogInterface.OnClickListener() {
@@ -61,11 +61,12 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                 AlertDialog alertDialog = builder.create();
-                alertDialog.setTitle("Добавление");
+                alertDialog.setTitle("Ура!Добавилось!");
                 alertDialog.show();
             }
         });
     }
+    //настраивание обработчика просмотра списка элементов
     private void VIEW() {
         viewList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,12 +81,14 @@ public class MainActivity extends AppCompatActivity {
                 while (res.moveToNext()){
                     dataList.add( res.getString(0) + "\n" + res.getString(1) + "\n" + res.getString(2));
                 }
+                //с помощью intent передаём данные на след.окно(ListActivity)
                 Intent intent = new Intent(getApplicationContext(), ListActivity.class);
                 intent.putStringArrayListExtra("dataList", dataList);
                 startActivity(intent);
             }
         });
     }
+    //дополнительное окно для отображения сообщений
     public void ShowMessage (String title,String Message){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);

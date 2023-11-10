@@ -23,17 +23,20 @@ public class DataBaseAccessor extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DB_VERSION);
     }
 
+    //создаётся таблица при запуске
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_NAME + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME + " VARCHAR(20), " + COLUMN_DESCRIPTION + " TEXT)");
     }
 
+    //обновляются таблицы после изменения версии бд
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
 
+    //метод для обновления данных в таблице по заданному id
     public void updateData(int id, String name, String description) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -44,6 +47,7 @@ public class DataBaseAccessor extends SQLiteOpenHelper {
         db.close();
     }
 
+    //вставка новых данных в таблицу
     public boolean insertData(String name, String description) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -56,12 +60,13 @@ public class DataBaseAccessor extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    //получение уже новых созданных данных из таблицы
     public Cursor viewData() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
     }
 
-
+    //получение id элемента из таблицы по его имени
     @SuppressLint("Range")
     public int getItemIdFromDatabase(String itemName) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -70,6 +75,7 @@ public class DataBaseAccessor extends SQLiteOpenHelper {
         String selection = COLUMN_NAME + "=?";
         String[] selectionArgs = {itemName};
 
+        //предоставляет доступ к результатом запроса бд
         Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
 
         int itemId = -1;
@@ -80,5 +86,11 @@ public class DataBaseAccessor extends SQLiteOpenHelper {
 
         cursor.close();
         return itemId;
+    }
+    //метод который удаляет записи из таблицы по id
+    public void deleteData(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NAME, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        db.close();
     }
 }
